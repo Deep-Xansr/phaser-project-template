@@ -1,11 +1,15 @@
 import FpsText from '../objects/fpsText'
 import AlignmentGrid from '../objects/AlignmentGrid'
-import { Vector } from 'matter'
+import MultiCellTile from '../objects/MultiCellTile'
+import { MutiTileType } from '../type/Enums'
 
 export default class MainScene extends Phaser.Scene {
   fpsText : FpsText
   grid : AlignmentGrid
   image : Phaser.GameObjects.Image
+  multiCellTile : MultiCellTile;
+
+
 
   isOverlapping : boolean = false;
   currentOverlappingCellCordinates : Phaser.Math.Vector2;
@@ -114,6 +118,35 @@ export default class MainScene extends Phaser.Scene {
     console.log('cell size : ',this.grid.cellHeight, this.grid.cellWidth);
     console.log('image size : ',this.image.displayHeight, this.image.displayWidth);
 
+    this.multiCellTile = new MultiCellTile(this, 0, 0, MutiTileType.Square, new Phaser.Math.Vector2(50,50));
+    this.multiCellTile.setPosition(100,100);
+
+    this.multiCellTile.setInteractive();
+    this.input.setDraggable(this.multiCellTile);
+
+    this.multiCellTile.on('dragstart', (pointer: Phaser.Input.Pointer) => {
+      console.log('drag start');
+    });
+
+    // While dragging the image
+    this.multiCellTile.on('drag', (pointer: Phaser.Input.Pointer, dragX: number, dragY: number) => {
+      console.log('dragging');
+    });
+
+    // When the drag ends
+    this.multiCellTile.on('dragend', (pointer: Phaser.Input.Pointer) => {
+      console.log('drag end');
+      // Optionally, remove the tint when dragging ends
+
+      // this.grid.RemoveHighlights();
+
+      // this.image.clearTint();
+      // console.log('drag end');
+      // if(this.isOverlapping){
+      //   let imagePos = this.grid.gridToWorldFromVector(this.currentOverlappingCellCordinates)
+      //   this.image.setPosition(imagePos.x, imagePos.y);
+      // }
+    });
 
   }
 
