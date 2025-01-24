@@ -51,7 +51,20 @@ export default class MultiCellTile extends GameObjects.Container {
     // Get positions for the tiles
     const tilePositions = getTilePositionFromType(tileType);
 
+    // for(let i = 0; i< 2;i++){
+    //     let image = scene.add.image(0,0,'tile');
+    //     image.setDisplaySize(textureSize.x,textureSize.y);
+    //     this.add(image);
+    // }
+
+
     // Create and add tiles to the container
+    let size = this.getTotalSize(textureSize);
+    this.setSize(size.x,size.y);
+    // this.setDisplaySize(size.x,size.y);
+    
+    console.log("MutliCellTile size : ",size);
+    console.log("MutliCellTile pos : ",this.x,this.y);
 
     tilePositions.forEach((position) => {
       const tileX = position.x * textureSize.x; // Use textureSize for dynamic sizing
@@ -67,15 +80,10 @@ export default class MultiCellTile extends GameObjects.Container {
       this.tiles.push(tile);
     });
 
-    let size = this.getTotalSize(textureSize);
-    console.log("MutliCellTile size : ",size);
-    this.setSize(size.x,size.y);
+    
 
     // Create a Phaser Graphics object
-    const highlight = this.scene.add.graphics();
-    // Draw a rectangle over the cell
-    highlight.lineStyle(2, 0xff0000, 1); // Set line color and thickness
-    highlight.strokeRect(this.x, this.y, this.displayWidth, this.displayHeight); // Draw the rectangle
+    // Draw the rectangle
 
   }
 
@@ -86,10 +94,18 @@ export default class MultiCellTile extends GameObjects.Container {
     });
   }
 
+
+
   // Example: Highlight all tiles by changing their tint
   highlightTiles(color: number): void {
     this.tiles.forEach((tile) => {
       tile.setTint(color);
+    });
+  }
+
+  unHighlightTiles() : void{
+    this.tiles.forEach((tile) => {
+      tile.clearTint();
     });
   }
 
@@ -120,6 +136,26 @@ export default class MultiCellTile extends GameObjects.Container {
     const height = maxY - minY + textureSize.y;
 
     return new Phaser.Math.Vector2(width, height);
+  }
+
+  getTileLocalCordForIndex(index : number) : Phaser.Math.Vector2{
+    return  getTilePositionFromType(this.tileType)[index];
+  }
+
+  getImageAtPosition(gridX: number, gridY: number): Phaser.GameObjects.Image | null {
+    // Get the tile positions based on the tile type
+    const tilePositions = getTilePositionFromType(this.tileType);
+  
+    // Find the index of the position that matches the given grid coordinates
+    const index = tilePositions.findIndex(position => position.x === gridX && position.y === gridY);
+  
+    // If a matching position is found, return the corresponding image
+    if (index !== -1) {
+      return this.tiles[index];
+    }
+  
+    // If no matching position is found, return null
+    return null;
   }
 
   setInteractive(hitArea?: Phaser.Types.Input.InputConfiguration | any, callback?: Phaser.Types.Input.HitAreaCallback, dropZone?: boolean): this {

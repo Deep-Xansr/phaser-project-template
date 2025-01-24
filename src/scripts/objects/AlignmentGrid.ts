@@ -1,4 +1,3 @@
-import { Vector } from "matter";
 import { Math } from "phaser";
 
 
@@ -10,21 +9,30 @@ let highlightedGraphics : Phaser.GameObjects.Graphics[];
 
 export default class AlignmentGrid extends Phaser.GameObjects.Grid{
 
-    constructor(scene : Phaser.Scene,startPosition : Math.Vector2,gridDimension : Math.Vector2,cellDimension : Math.Vector2,fillColor?: number,fillAlpha?: number,outlineFillColor?: number,outlineFillAlpha?: number){
+    gridWdith : number;
+    gridHeight : number;
+    cellWidth : number;
+    cellHeight: number;
+
+    constructor(scene : Phaser.Scene,startPosition : Math.Vector2,gridSize : Math.Vector2,cellDimension : Math.Vector2,cellGap : Math.Vector2,fillColor?: number,fillAlpha?: number,outlineFillColor?: number,outlineFillAlpha?: number){
         
         const centerX = scene.cameras.main.width / 2;
         const centerY = scene.cameras.main.height / 2;
 
-        // const adjustedWidth = (cellDimension.x + cellGap.x) * (gridDimension.x - 1) + cellDimension.x;
-        // const adjustedHeight = (cellDimension.y + cellGap.y) * (gridDimension.y - 1) + cellDimension.y;
+        
 
+        const gridDimensionX = (cellDimension.x * gridSize.x) + (cellGap.x * (gridSize.x - 1));
+        const gridDimensionY = (cellDimension.y * gridSize.y) + (cellGap.y * (gridSize.y - 1));
+
+
+        console.log("Grid : ",gridDimensionX,gridDimensionY);
         
         super(
             scene, 
             centerX,
             centerY, 
-            gridDimension.x,
-            gridDimension.y,
+            gridDimensionX,
+            gridDimensionY,
             cellDimension.x,
             cellDimension.y,
             fillColor, 
@@ -45,7 +53,8 @@ export default class AlignmentGrid extends Phaser.GameObjects.Grid{
             for (let j = 0; j < this.height; j++) {
                 const cellX = this.x + i * this.cellWidth;
                 const cellY = this.y + j * this.cellHeight;
-                gridCells.push(new Phaser.Geom.Rectangle(cellX, cellY, this.cellWidth, this.cellHeight));
+                const highlight = this.scene.add.graphics();
+                highlightedGraphics.push(highlight);
 
                 // const text = scene.add.text(
                 //     cellX + this.cellWidth / 2,
@@ -73,7 +82,12 @@ export default class AlignmentGrid extends Phaser.GameObjects.Grid{
         return new Math.Vector2(this.width/this.cellWidth, this.height/this.cellHeight);
     }
 
-    public checkImageOverlapWithCell(image: Phaser.GameObjects.Image, cellX: number, cellY: number): boolean {
+    public checkImageOverlapWithCell(image: Phaser.GameObjects.Image | null, cellX: number, cellY: number): boolean {
+
+        if (image == null) {
+            return false;
+        }
+
         const imageBounds = new Phaser.Geom.Rectangle(
             image.x - image.displayWidth / 2,
             image.y - image.displayHeight / 2,
@@ -132,6 +146,8 @@ export default class AlignmentGrid extends Phaser.GameObjects.Grid{
             // Draw a rectangle over the cell
             highlight.lineStyle(2, highlightColor, 1); // Set line color and thickness
             highlight.strokeRect(cellLeft, cellTop, this.cellWidth, this.cellHeight); // Draw the rectangle
+
+            console.log('highlighted cell : ', cellPositions[i].x, cellPositions[i].y);
         }
     }
 
