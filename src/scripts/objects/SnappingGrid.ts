@@ -1,6 +1,7 @@
 import { Vector } from 'matter';
 import { Math as PhaserMath } from 'phaser';
 
+//TODO : Add functionality to place tiles and spacer texture (for the gaps.)
 export default class SnappingGrid extends Phaser.GameObjects.Container {
     numberOfCellX: number;
     numberOfCellY: number;
