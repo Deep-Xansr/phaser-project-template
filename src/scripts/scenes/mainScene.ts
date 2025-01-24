@@ -268,7 +268,24 @@ export default class MainScene extends Phaser.Scene {
 
     // });
 
-    this.snappingGrid = new SnappingGrid(this,5,5,50,50,10);
+    this.snappingGrid = new SnappingGrid(this,5,5,50,50,10,
+      {
+        cellSocketTexture : 'tileSocket',
+        cellBoundaryTexture : null
+      },
+      false
+    );
+
+    this.snappingGrid.setInteractive();
+
+    this.snappingGrid.on('pointerup', (pointer: Phaser.Input.Pointer) =>{
+      console.log('pointer over');
+    });
+
+    this.input.on(
+      'pointerdown',
+      () => console.log('pointer down')
+    )
   }
 
   update() {
